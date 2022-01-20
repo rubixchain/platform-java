@@ -1,6 +1,59 @@
-# Rubix API Calls
+<p align="center">
+  <a href="https://rubix.network">
+    <img alt="Solana" src="https://i.imgur.com/6vToeX2.png" width="150" />
+  </a>
+</p>
 
-## DID Creation
+# Platform
+
+
+## Building from Source
+
+Rubix Platform is the Spring API project which uses RubixCoreJava and DIDRef to run the network. To build the source, you need to download the RubixCoreJava and DIDRef repositories. Then, you need to build the RubixCoreJava and DIDRef java libraries. Install the dependencies by running the following mvn commmand with different versions of the dependencies. Update the versions in the pom.xml file to match the versions of the dependencies. Then, you need to build the RubixPlatform.jar file using mvn package command.
+
+
+RUBIX JAR build setup  
+```
+mvn install:install-file \
+   -Dfile=/<path to jar>/rubixcorejava.jar \
+   -DgroupId=com.rubix.core \
+   -DartifactId=rubix \
+   -Dversion=10.1-creditSecurity \
+   -Dpackaging=jar \
+   -DgeneratePom=true
+  
+ ```
+
+
+DID Ref build setup
+
+```
+
+mvn install:install-file \
+   -Dfile=/<path to jar>/didjava.jar \
+   -DgroupId=com.did.core \
+   -DartifactId=did \
+   -Dversion=10.1-mainnet \
+   -Dpackaging=jar \
+   -DgeneratePom=true
+   
+```
+
+In rubixplatform repo:
+
+```
+mvn clean
+```
+
+and
+
+```
+mvn package
+```
+
+## Rubix API Calls
+
+### DID Creation
 
 Creates a unique Decentralized IDentity 
 ```
@@ -19,7 +72,7 @@ While creating a new DID, user has to provide any 256x256 PNG format image as a 
 ***Returns***:         DID (String)
 
 
-## Initial Setup
+### Initial Setup
 
 Does the initial setup of IPFS and syncing the network nodes
 ```
@@ -32,7 +85,7 @@ curl --header "Content-Type: application/json" --request GET 'http://localhost:1
 ***Returns***:         nill
 
 
-## Transfer Tokens
+### Transfer Tokens
 
 Transfers token(s) from one wallet address to another 
 ```
@@ -45,7 +98,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Returns***:         Transaction ID (String), Success / Failure (Boolean), DID (String)
 
 
-## Commit File Blocks
+### Commit File Blocks
 
 Commit a file block to quorum members for storage
 ```
@@ -59,7 +112,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Returns***:         Transaction ID (String), Success / Failure (Boolean), DID (String)
 
 
-## Validate File Blocks
+### Validate File Blocks
 
 Validate files stored by quorum members 
 ```
@@ -72,7 +125,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Condition***: Given block file hash should be already commited for validation before. 
 ***Returns***:         Hash of each input file given in blockHash file and number of validators storing it in blockchain, Success / Failure (Boolean)
 
-## Account Information
+### Account Information
 Retrieves the user account details 
 
 ```
@@ -85,7 +138,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Returns***: DID (String), WalletID (String), TransactionAsSender (Integer), TransactionAsReceiver (Integer), Balance (Integer)
 
 
-## Get Transaction Details with Transaction ID
+### Get Transaction Details with Transaction ID
 
 Details of a particular transaction like Quorum involved, token transferred, receiver details, time and more
 ```
@@ -98,7 +151,7 @@ curl --header "Content-Type: application/json" --request POST  http://localhost:
 ***Returns***:  senderDID(String), role(String), totalTime(Integer), quorumLGMT(ArrayList[String]), tokens(ArrayList), comment(String), txn(String), essentialShare(String), receiverDID(String), Date(Date)
 
 
-## Get Transaction Details with Date
+### Get Transaction Details with Date
 
 Retrieves the details of all the transactions committed during the specified period
 ```
@@ -111,7 +164,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Input***:  sDate (String),  eDate (String)
 ***Returns***: senderDID(String), role(String), totalTime(Integer), quorumLGMT(ArrayList[String]), tokens(ArrayList), comment(String), txn(String), essentialShare(String), receiverDID(String), Date(Date)
 
-## Get Transaction Details with Comment
+### Get Transaction Details with Comment
 
 Retrieves the details of all the transactions committed with the specified comment
 ```
@@ -123,7 +176,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Input***:  comment (String)
 ***Returns***: senderDID(String), role(String), totalTime(Integer), quorumLGMT(ArrayList[String]), tokens(ArrayList), comment(String), txn(String), essentialShare(String), receiverDID(String), Date(Date)
 
-## Get Transaction Details with Count
+### Get Transaction Details with Count
 
 Retrieves the last specified count of transactions committed 
 ```
@@ -135,7 +188,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Input***:  count (Integer)
 ***Returns***: senderDID(String), role(String), totalTime(Integer), quorumLGMT(ArrayList[String]), tokens(ArrayList), comment(String), txn(String), essentialShare(String), receiverDID(String), Date(Date)
 
-## Get Transaction Details with User's DID
+### Get Transaction Details with User's DID
 
 Retrieves all the transactions made with the input DID
 ```
@@ -148,7 +201,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Input***:  did (String)
 ***Returns***: List of all transactions and its details made with the did
 
-## Get Transaction Details by Range
+### Get Transaction Details by Range
 
 Retrieves all the transactions made with the input DID
 ```
@@ -161,7 +214,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Returns***: List of all transactions and its details within a range bound
 
 
-## Get Transaction Header Details
+### Get Transaction Header Details
 
 Summarize transaction information
 ```
@@ -174,7 +227,7 @@ curl --header "Content-Type: application/json" --request GET 'http://localhost:1
 ***Returns***: spentCredits(int), unspentCredits(int), txnCount(int), maxCredits(int)
 
 
-## List of Tokens
+### List of Tokens
 Lists out all the tokens available in the user's wallet
 ```
 curl --header "Content-Type: application/json" --request GET http://localhost:1898/viewTokens
@@ -185,7 +238,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Input***:   nill
 ***Returns***: List of Tokens (JSONObject)
 
-## List of Peers Online
+### List of Peers Online
 
 Lists all your contacts currently available online
 ```
@@ -197,7 +250,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Input***:   nill
 ***Returns***: List of objects: did(String), online/offline
 
-## View Contacts 
+### View Contacts 
 
 Lists all contacts in your addressbook
 ```
@@ -209,7 +262,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Input***:   nill
 ***Returns***: List of objects: did(String), nickname(String)
 
-## View Network Nodes 
+### View Network Nodes 
 
 Lists all the nodes in the network
 ```
@@ -221,7 +274,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Input***:   nill
 ***Returns***: List of DIDs
 
-## View Network Nodes 
+### View Network Nodes 
 
 Add an easier and convinient name to your contacts
 ```
@@ -235,7 +288,7 @@ curl --location --request POST 'http://localhost:1898/addNickName' --form 'did="
 
 
 
-## Details for Dashboard
+### Details for Dashboard
 
 Lists all required details of user's wallet
 ```
@@ -248,7 +301,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Returns***: totalTxns(Integer), WalletID(String), balance(Integer), , receiverTxns(Integer), senderTxns(Integer), contactsCount(Integer), onlinePeers(Integer), transactionsPerDay(List), did(String)
 
 
-## Close Streams
+### Close Streams
 
 To close all the streams open
 ```
@@ -260,7 +313,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Input***:   nill
 ***Returns***: nill
 
-## Synchronise Network Nodes
+### Synchronise Network Nodes
 
 To synchronize the DIDs of the systems, so that the node will have an updated list of all the DIDs in the network.
 ```
@@ -273,7 +326,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Returns***: nill
 
 
-## View bootstraps
+### View bootstraps
 
 View list of bootstraps connected to the node
 ```
@@ -285,7 +338,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 ***Input***:   Null
 ***Returns***: Response (String)
 
-## Add bootstrap
+### Add bootstrap
 
 Add bootstrap id to the boostrap list
 ```
@@ -297,7 +350,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Input***:   Bootstrap ID
 ***Returns***: Response (String)
 
-## Remove bootstrap
+### Remove bootstrap
 
 Remove boostrap id from the boostrap list
 ```
