@@ -6,6 +6,9 @@
 
 # Platform
 
+Java Spring service that connects wallets and other 3rd party applications, configurations for node setup with Core rubix framework.
+
+Platform is accesible via REST APIs in localhost:1898.
 
 ## Building from Source
 
