@@ -18,7 +18,7 @@ Rubix Platform is the Spring API project which uses RubixCoreJava and DIDRef to 
 RUBIX JAR build setup  
 ```
 mvn install:install-file \
-   -Dfile=/<path to jar>/rubixcorejava.jar \
+   -Dfile=/<path to jar>/core-java.jar \
    -DgroupId=com.rubix.core \
    -DartifactId=rubix \
    -Dversion=10.1-creditSecurity \
@@ -33,7 +33,7 @@ DID Ref build setup
 ```
 
 mvn install:install-file \
-   -Dfile=/<path to jar>/didjava.jar \
+   -Dfile=/<path to jar>/did-java.jar \
    -DgroupId=com.did.core \
    -DartifactId=did \
    -Dversion=10.1-mainnet \
@@ -42,7 +42,7 @@ mvn install:install-file \
    
 ```
 
-In rubixplatform repo:
+In platform-java repo:
 
 ```
 mvn clean
