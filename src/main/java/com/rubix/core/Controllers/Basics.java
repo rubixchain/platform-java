@@ -212,8 +212,8 @@ public class Basics {
         result.put("response", "Bootstrap List");
         // result.put("message", "Bootstrap added: " + bootstrapId);
         result.put("message", BOOTSTRAPS.toString().replace(",", "") // remove the commas
-                .replace("[", "") // remove the right bracket
-                .replace("]", "") // remove the left bracket
+                .replace("[", "") // remove the left bracket
+                .replace("]", "") // remove the right bracket
                 .trim());
         result.put("ipfs-config-sync", configMatching);
         return result.toString();
