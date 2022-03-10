@@ -1,45 +1,28 @@
 package com.rubix.core.Controllers;
 
-import static com.rubix.Constants.IPFSConstants.bootstrap;
-import static com.rubix.Resources.APIHandler.addPublicData;
-import static com.rubix.Resources.APIHandler.closeStreams;
-import static com.rubix.Resources.APIHandler.networkInfo;
-import static com.rubix.Resources.Functions.BOOTSTRAPS;
-import static com.rubix.Resources.Functions.DATA_PATH;
-import static com.rubix.Resources.Functions.IPFS_PORT;
-import static com.rubix.Resources.Functions.PAYMENTS_PATH;
-import static com.rubix.Resources.Functions.QUORUM_PORT;
-import static com.rubix.Resources.Functions.TOKENCHAIN_PATH;
-import static com.rubix.Resources.Functions.TOKENS_PATH;
-import static com.rubix.Resources.Functions.checkDirectory;
-import static com.rubix.Resources.Functions.dirPath;
-import static com.rubix.Resources.Functions.launch;
-import static com.rubix.Resources.Functions.pathSet;
-import static com.rubix.Resources.Functions.readFile;
-import static com.rubix.Resources.Functions.tokenBank;
-import static com.rubix.Resources.Functions.writeToFile;
-import static com.rubix.Resources.IPFSNetwork.executeIPFSCommandsResponse;
-import static com.rubix.core.Resources.CallerFunctions.mainDir;
-
-import java.io.File;
-import java.io.IOException;
-
 import com.rubix.Consensus.QuorumConsensus;
+import com.rubix.Ping.PingCheck;
+import com.rubix.Resources.Functions;
 import com.rubix.Resources.IPFSNetwork;
 import com.rubix.core.Resources.Background;
+import com.rubix.core.Resources.QuorumPingReceiveThread;
 import com.rubix.core.Resources.Receiver;
-import com.rubix.core.Resources.ReceiverParts;
-
+import com.rubix.core.Resources.ReceiverPingReceive;
+import io.ipfs.api.IPFS;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import io.ipfs.api.IPFS;
+import static com.rubix.Constants.IPFSConstants.bootstrap;
+
+import java.io.*;
+
+import static com.rubix.Resources.APIHandler.*;
+import static com.rubix.Resources.Functions.*;
+import static com.rubix.Resources.IPFSNetwork.executeIPFSCommandsResponse;
+import static com.rubix.core.Resources.CallerFunctions.mainDir;
 
 @CrossOrigin(origins = "http://localhost:1898")
 @RestController
@@ -47,9 +30,10 @@ public class Basics {
     public static String location = "";
     public static boolean mutex = false;
 
-    @RequestMapping(value = "/start", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    @RequestMapping(value = "/start", method = RequestMethod.GET,
+            produces = {"application/json", "application/xml"})
     public static String start() throws JSONException, IOException {
-        if (mutex) {
+        if(mutex){
             JSONObject result = new JSONObject();
             JSONObject contentObject = new JSONObject();
             contentObject.put("response", "Already Setup");
@@ -58,20 +42,20 @@ public class Basics {
             result.put("status", "true");
             return result.toString();
         }
-        if (mainDir()) {
+        if(mainDir()){
             mutex = true;
             launch();
             pathSet();
 
-            QuorumConsensus alpha1 = new QuorumConsensus("alpha", QUORUM_PORT);
+            QuorumConsensus alpha1 = new QuorumConsensus("alpha",QUORUM_PORT);
             Thread alpha1Thread = new Thread(alpha1);
             alpha1Thread.start();
 
-            QuorumConsensus beta1 = new QuorumConsensus("beta", QUORUM_PORT + 1);
+            QuorumConsensus beta1 = new QuorumConsensus("beta",QUORUM_PORT+1);
             Thread beta1Thread = new Thread(beta1);
             beta1Thread.start();
 
-            QuorumConsensus gamma1 = new QuorumConsensus("gamma", QUORUM_PORT + 2);
+            QuorumConsensus gamma1 = new QuorumConsensus("gamma",QUORUM_PORT+2);
             Thread gamma1Thread = new Thread(gamma1);
             gamma1Thread.start();
 
@@ -79,20 +63,19 @@ public class Basics {
             Thread receiverThread = new Thread(receiver);
             receiverThread.start();
 
-            ReceiverParts receiveParts = new ReceiverParts();
-            Thread receiverPartsThread = new Thread(receiveParts);
-            receiverPartsThread.start();
+            ReceiverPingReceive receiverPingReceive = new ReceiverPingReceive();
+            Thread receiverPingThread = new Thread(receiverPingReceive);
+            receiverPingThread.start();
+
+            QuorumPingReceiveThread quorumPingReceiveThread = new QuorumPingReceiveThread();
+            Thread quorumPingThread = new Thread(quorumPingReceiveThread);
+            quorumPingThread.start();
 
             tokenBank();
 
             System.out.println(repo());
 
             addPublicData();
-
-            Background background = new Background();
-            Thread backThread = new Thread(background);
-            backThread.start();
-
             pathSet();
 
             String PART_TOKEN_CHAIN_PATH = TOKENCHAIN_PATH.concat("PARTS/");
@@ -109,6 +92,10 @@ public class Basics {
                 writeToFile(partTokensFile.toString(), "[]", false);
             }
 
+//            Background background = new Background();
+//            Thread backThread = new Thread(background);
+//            backThread.start();
+
             JSONObject result = new JSONObject();
             JSONObject contentObject = new JSONObject();
             contentObject.put("response", "Setup Complete");
@@ -116,16 +103,18 @@ public class Basics {
             result.put("message", "");
             result.put("status", "true");
             return result.toString();
-        } else {
+        }
+        else{
             return checkRubixDir();
         }
     }
 
-    @RequestMapping(value = "/check", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    @RequestMapping(value = "/check", method = RequestMethod.GET,
+            produces = {"application/json", "application/xml"})
     public static String checkRubixDir() throws JSONException, IOException {
         String rubixFolders = checkDirectory();
         JSONObject folderStatus = new JSONObject(rubixFolders);
-        if (!folderStatus.getString("status").contains("Success")) {
+        if(!folderStatus.getString("status").contains("Success")){
             JSONObject result = new JSONObject();
             JSONObject contentObject = new JSONObject();
             contentObject.put("response", folderStatus);
@@ -136,7 +125,7 @@ public class Basics {
         }
 
         File contactsFile = new File(DATA_PATH + "Contacts.json");
-        if (!contactsFile.exists()) {
+        if(!contactsFile.exists()) {
             contactsFile.createNewFile();
             writeToFile(DATA_PATH + "Contacts.json", new JSONArray().toString(), false);
         }
@@ -160,8 +149,7 @@ public class Basics {
         File bnk11file = new File(location + "BNK11.json");
         File tokenMapFile = new File(location + "TokenMap.json");
 
-        if (!bnk00file.exists() || !bnk01file.exists() || !bnk10file.exists() || !bnk11file.exists()
-                || !tokenMapFile.exists()) {
+        if (!bnk00file.exists() || !bnk01file.exists() || !bnk10file.exists() || !bnk11file.exists() || !tokenMapFile.exists()) {
             workingDir.delete();
 
             JSONObject result = new JSONObject();
@@ -182,26 +170,27 @@ public class Basics {
         return result.toString();
     }
 
-    @RequestMapping(value = "/sync", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    @RequestMapping(value = "/sync", method = RequestMethod.GET,
+            produces = {"application/json", "application/xml"})
     public String sync() throws IOException, JSONException {
         if (!mainDir())
             return checkRubixDir();
-        if (!mutex)
+        if(!mutex)
             start();
-        networkInfo();
+         networkInfo();
 
         JSONObject result = new JSONObject();
         JSONObject contentObject = new JSONObject();
         contentObject.put("response", "Network Nodes Synced");
-        result.put("data", contentObject);
+        result.put("data",contentObject);
         result.put("message", "");
         result.put("status", "true");
         return result.toString();
     }
 
-    @RequestMapping(value = "/bootstrap", method = RequestMethod.GET, produces = { "application/json",
-            "application/xml" })
+    @RequestMapping(value = "/bootstrap", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
     public String getBootstrap() throws IOException, JSONException {
+
 
         String command = bootstrap + "list";
 
@@ -256,8 +245,8 @@ public class Basics {
         JSONArray pathsArray = new JSONArray(configFileContent);
         BOOTSTRAPS = pathsArray.getJSONArray(5);
 
-        for (int i = 0; i < BOOTSTRAPS.length(); i++) {
-            if (BOOTSTRAPS.getString(i).equals(bootstrapId)) {
+        for(int i = 0; i < BOOTSTRAPS.length(); i++){
+            if(BOOTSTRAPS.getString(i).equals(bootstrapId)){
                 pathsArray.getJSONArray(5).remove(i);
                 break;
             }
@@ -272,10 +261,10 @@ public class Basics {
         return result.toString();
     }
 
-    @RequestMapping(value = "/p2pClose", method = RequestMethod.GET, produces = { "application/json",
-            "application/xml" })
+    @RequestMapping(value = "/p2pClose", method = RequestMethod.GET,
+            produces = {"application/json", "application/xml"})
     public String p2pClose() throws JSONException, IOException {
-        if (!mutex)
+        if(!mutex)
             start();
         closeStreams();
         JSONObject result = new JSONObject();
@@ -287,19 +276,60 @@ public class Basics {
         return result.toString();
     }
 
-    @RequestMapping(value = "/shutdown", method = RequestMethod.GET, produces = { "application/json",
-            "application/xml" })
+    @RequestMapping(value = "/shutdown", method = RequestMethod.GET,
+            produces = {"application/json", "application/xml"})
     public String shutdown() {
         IPFSNetwork.executeIPFSCommands("ipfs shutdown");
         System.exit(0);
         return "Shutting down";
     }
 
-    @RequestMapping(value = "/repo", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+    @RequestMapping(value = "/repo", method = RequestMethod.GET,
+            produces = {"application/json", "application/xml"})
     public static String repo() {
         IPFS ipfs = new IPFS("/ip4/127.0.0.1/tcp/" + IPFS_PORT);
         IPFSNetwork.repo(ipfs);
         return "Garbage Collected";
     }
+    @RequestMapping(value = "/tokenParts", method = RequestMethod.GET,
+            produces = {"application/json", "application/xml"})
+    public static Double tokenParts(@RequestParam("token") String tokenHash) {
+        return Functions.partTokenBalance(tokenHash);
+
+    }
+
+    @RequestMapping(value = {"/validateReceiver"}, method = {RequestMethod.GET}, produces = {"application/json", "application/xml"})
+    public String validateReceiver(@RequestParam("receiverDID") String receiverDID) throws IOException {
+        System.out.println(receiverDID);
+        JSONObject result = new JSONObject();
+        JSONObject contentObject = new JSONObject();
+        String receiverPeerId = Functions.getValues(Functions.DATA_PATH + "DataTable.json", "peerid", "didHash", receiverDID);
+        if (Functions.getValues(Functions.DATA_PATH + "DataTable.json", "didHash", "didHash", receiverDID) == "") {
+            sync();
+            if (Functions.getValues(Functions.DATA_PATH + "DataTable.json", receiverDID, "didHash", receiverDID) == "") {
+                contentObject.put("response", "Invalid " + receiverDID);
+                result.put("data", contentObject);
+                result.put("message", "Invalid " + receiverDID);
+                result.put("status", "true");
+            }
+        } else {
+            boolean sanityCheck = Functions.sanityCheck(receiverPeerId, ipfs, Functions.SEND_PORT + 10);
+            if (!sanityCheck) {
+                contentObject.put("response", Functions.sanityMessage);
+                result.put("data", contentObject);
+                result.put("status", "Failed");
+                result.put("message", "");
+                System.out.println(Functions.sanityMessage);
+                return result.toString();
+            }
+            contentObject.put("response", receiverDID + " is valid");
+            result.put("data", contentObject);
+            result.put("message", receiverDID + " is valid");
+            result.put("status", "true");
+        }
+        System.out.println(result.toString());
+        return result.toString();
+    }
 
 }
+
