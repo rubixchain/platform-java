@@ -185,7 +185,7 @@ public class Basics {
         try {
             getTxnByDateValue = getTxnByDateFutureResult.get();
         } catch (Exception exc) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /check");
             exc.printStackTrace();
         }
         getTxnByDateES.shutdown();
@@ -218,7 +218,7 @@ public class Basics {
             try {
                 syncValue = syncResult.get();
             } catch (Exception exc) {
-                System.out.println("Error occured in /viewTokens");
+                System.out.println("Error occured in /sync");
                 exc.printStackTrace();
             }
             syncES.shutdown();
@@ -255,7 +255,7 @@ public class Basics {
         try {
             bootstrapValue = bootstrapResult.get();
         } catch (Exception exc) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /bootstrap");
             exc.printStackTrace();
         }
         bootstrapES.shutdown();
@@ -338,7 +338,7 @@ public class Basics {
         try {
             p2pCloseValue = p2pCloseResult.get();
         } catch (Exception exc) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /p2pClose");
             exc.printStackTrace();
         }
         p2pCloseES.shutdown();
@@ -368,7 +368,7 @@ public class Basics {
         try {
             repoValue = repoResult.get();
         } catch (Exception exc) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /repo");
             exc.printStackTrace();
         }
         repoES.shutdown();
@@ -428,7 +428,7 @@ public class Basics {
         try {
             validateReceiverValue = validateReceiverResult.get();
         } catch (Exception exc) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /validateReceiver");
             exc.printStackTrace();
         }
         validateReceiverES.shutdown();

@@ -71,7 +71,7 @@ public class Transactions {
         try {
             getTxnDetailsValue = getTxnDetailsfutureResult.get();
         } catch (Exception e) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /getTxnDetails");
             e.printStackTrace();
         }
         getTxnDetailsES.shutdown();
@@ -129,7 +129,7 @@ public class Transactions {
         try {
             getTxnByDateValue = getTxnByDateFutureResult.get();
         } catch (Exception exc) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /getTxnByDate");
             exc.printStackTrace();
         }
         getTxnByDateES.shutdown();
@@ -168,7 +168,7 @@ public class Transactions {
         try {
             getTxnByCommentValue = getTxnByCommentFutureResult.get();
         } catch (Exception e) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /getTxnByComment");
             e.printStackTrace();
         }
         getTxnByCommentES.shutdown();
@@ -213,7 +213,7 @@ public class Transactions {
         try {
             getTxnByCountValue = getTxnByCountfutureResult.get();
         } catch (Exception e) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /getTxnByCount");
             e.printStackTrace();
         }
         getTxnByCountES.shutdown();
@@ -262,7 +262,7 @@ public class Transactions {
         try {
             getTxnByDIDValue = getTxnByDIDfutureResult.get();
         } catch (Exception e) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /getTxnByDID");
             e.printStackTrace();
         }
         getTxnByDIDES.shutdown();
@@ -312,7 +312,7 @@ public class Transactions {
         try {
             getTxnByRangeValue = getTxnByRangefutureResult.get();
         } catch (Exception e) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /getTxnByRange");
             e.printStackTrace();
         }
         getTxnByRangeES.shutdown();
@@ -343,7 +343,7 @@ public class Transactions {
         try {
             getTransactionHeaderValue = getTransactionHeaderfutureResult.get();
         } catch (Exception e) {
-            System.out.println("Error occured in /viewTokens");
+            System.out.println("Error occured in /getTransactionHeader");
             e.printStackTrace();
         }
         getTransactionHeaderES.shutdown();
