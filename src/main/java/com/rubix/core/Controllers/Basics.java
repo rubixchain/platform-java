@@ -2,6 +2,7 @@ package com.rubix.core.Controllers;
 
 import com.rubix.Consensus.QuorumConsensus;
 import com.rubix.Ping.PingCheck;
+import com.rubix.Resources.APIHandler;
 import com.rubix.Resources.Functions;
 import com.rubix.Resources.IPFSNetwork;
 import com.rubix.core.Resources.Background;
@@ -71,6 +72,10 @@ public class Basics {
             Thread quorumPingThread = new Thread(quorumPingReceiveThread);
             quorumPingThread.start();
 
+            QuorumCreditsThread quorumCredits = new QuorumCreditsThread();
+            Thread creditsThread = new Thread(quorumCredits);
+            creditsThread.start();
+
             tokenBank();
 
             System.out.println(repo());
@@ -92,9 +97,9 @@ public class Basics {
                 writeToFile(partTokensFile.toString(), "[]", false);
             }
 
-//            Background background = new Background();
-//            Thread backThread = new Thread(background);
-//            backThread.start();
+            Background background = new Background();
+            Thread backThread = new Thread(background);
+            backThread.start();
 
             JSONObject result = new JSONObject();
             JSONObject contentObject = new JSONObject();
@@ -295,6 +300,13 @@ public class Basics {
             produces = {"application/json", "application/xml"})
     public static Double tokenParts(@RequestParam("token") String tokenHash) {
         return Functions.partTokenBalance(tokenHash);
+
+    }
+
+    @RequestMapping(value = "/arrangeQuorum", method = RequestMethod.GET,
+            produces = {"application/json", "application/xml"})
+    public static String arrangeQuorum() {
+        return APIHandler.sortType2Quorum().toString();
 
     }
 
