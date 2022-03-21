@@ -198,11 +198,7 @@ public class Basics {
         String syncValue = "";
         if (!mainDir())
             return checkRubixDir();
-        if (!mutex) {
-
-            ExecutorService syncES = Executors.newSingleThreadExecutor();
-            Future<String> syncResult = syncES.submit(new Callable<String>() {
-                public String call() throws Exception {
+        if (!mutex) 
                     start();
                     networkInfo();
 
@@ -213,19 +209,7 @@ public class Basics {
                     result.put("message", "");
                     result.put("status", "true");
                     return result.toString();
-                }
-            });
-            try {
-                syncValue = syncResult.get();
-            } catch (Exception exc) {
-                System.out.println("Error occured in /sync");
-                exc.printStackTrace();
-            }
-            syncES.shutdown();
-
-        }
-
-        return syncValue;
+                
     }
 
     @RequestMapping(value = "/bootstrap", method = RequestMethod.GET, produces = { "application/json",
@@ -386,10 +370,7 @@ public class Basics {
     @RequestMapping(value = "/validateReceiver", method = RequestMethod.GET, produces = { "application/json",
             "application/xml" })
     public String validateReceiver(@RequestParam("receiverDID") String receiverDID) throws IOException {
-        String validateReceiverValue = "";
-        ExecutorService validateReceiverES = Executors.newSingleThreadExecutor();
-        Future<String> validateReceiverResult = validateReceiverES.submit(new Callable<String>() {
-            public String call() throws Exception {
+        
                 System.out.println(receiverDID);
                 JSONObject result = new JSONObject();
                 JSONObject contentObject = new JSONObject();
@@ -424,16 +405,6 @@ public class Basics {
                 return result.toString();
 
             }
-        });
-        try {
-            validateReceiverValue = validateReceiverResult.get();
-        } catch (Exception exc) {
-            System.out.println("Error occured in /validateReceiver");
-            exc.printStackTrace();
-        }
-        validateReceiverES.shutdown();
-        return validateReceiverValue;
-
-    }
+        
 
 }
