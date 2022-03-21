@@ -363,7 +363,7 @@ public class Basics {
     @RequestMapping(value = "/tokenParts", method = RequestMethod.GET, produces = { "application/json",
             "application/xml" })
     public static Double tokenParts(@RequestParam("token") String tokenHash) {
-        return Functions.partTokenBalance(tokenHash);
+        return partTokenBalance(tokenHash);
 
     }
 

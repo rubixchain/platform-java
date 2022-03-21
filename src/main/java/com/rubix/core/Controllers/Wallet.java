@@ -209,7 +209,7 @@ public class Wallet {
         Future<String> getContactsListFuture = getContactsListES.submit(new Callable<String>() {
             public String call() throws Exception {
 
-                String contactsTable = Functions.readFile(Functions.DATA_PATH + "Contacts.json");
+                String contactsTable = readFile(DATA_PATH + "Contacts.json");
                 JSONArray contactsArray = new JSONArray(contactsTable);
 
                 String DIDFile = readFile(DATA_PATH + "DID.json");
