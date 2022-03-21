@@ -1,5 +1,6 @@
 package com.rubix.core.Controllers;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.rubix.Consensus.QuorumConsensus;
 import com.rubix.Ping.PingCheck;
 import com.rubix.Resources.Functions;
@@ -173,11 +174,12 @@ public class Basics {
     @RequestMapping(value = "/sync", method = RequestMethod.GET,
             produces = {"application/json", "application/xml"})
     public String sync() throws IOException, JSONException {
-        if (!mainDir())
+        try{
+            if (!mainDir())
             return checkRubixDir();
         if(!mutex)
             start();
-         networkInfo();
+            networkInfo();
 
         JSONObject result = new JSONObject();
         JSONObject contentObject = new JSONObject();
@@ -186,6 +188,9 @@ public class Basics {
         result.put("message", "");
         result.put("status", "true");
         return result.toString();
+        } catch(IOException e){
+            System.out.println("JSON Exception occured : "+e);
+        }
     }
 
     @RequestMapping(value = "/bootstrap", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
