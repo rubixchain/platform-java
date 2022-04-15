@@ -1,5 +1,6 @@
 package com.rubix.core.Controllers;
 
+import com.rubix.AuthenticateNode.Authenticate;
 import com.rubix.Resources.APIHandler;
 import com.rubix.Resources.Functions;
 import com.rubix.core.Resources.RequestModel;
@@ -13,6 +14,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+
+import org.json.JSONException;
+import java.lang.InterruptedException;
 
 import static RubixDID.DIDCreation.DIDimage.createDID;
 import static com.rubix.Resources.APIHandler.send;
@@ -112,6 +116,9 @@ public class Operations {
             return checkRubixDir();
         if (!Basics.mutex)
             start();
+        if (type == 0) {
+            type = 1;
+        }
         return APIHandler.create(type).toString();
 
     }
@@ -119,7 +126,7 @@ public class Operations {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST,
             produces = {"application/json", "application/xml"})
-    public String Create(@RequestParam("image") MultipartFile imageFile) throws Exception {
+    public String Create(@RequestParam("image") MultipartFile imageFile) throws IOException, JSONException, InterruptedException {
         setDir();
         File RubixFolder = new File(dirPath);
         if (RubixFolder.exists())
@@ -140,7 +147,7 @@ public class Operations {
 
     @RequestMapping(value = "/generate", method = RequestMethod.GET,
             produces = {"application/json", "application/xml"})
-    public String generate() {
+    public String generate() throws JSONException {
         int width = 256;
         int height = 256;
         String src = null;
@@ -175,4 +182,76 @@ public class Operations {
         result.put("status", "true");
         return result.toString();
     }
+    
+    @RequestMapping(value = "/commitBlock", method = RequestMethod.POST,
+            produces = {"application/json", "application/xml"})
+    public static String commitBlock(@RequestBody RequestModel requestModel) throws Exception {
+        if (!mainDir())
+            return checkRubixDir();
+        if (!Basics.mutex)
+            start();
+
+        String blockHash = requestModel.getBlockHash();
+        String comments = requestModel.getComment();
+        int type = requestModel.getType();
+        
+        System.out.println("Opertaions - blockHash "+blockHash+" comments "+comments+" type "+type);
+
+        JSONObject objectSend = new JSONObject();
+        objectSend.put("blockHash", blockHash);
+        objectSend.put("type", type);
+        objectSend.put("comment", comments);
+        
+        System.out.println("Opertaions - objectsend is "+objectSend.toString());
+
+
+        System.out.println("Opertaions - Starting to commit block");
+        System.out.println("Opertaions - ObjectSend "+objectSend.toString());
+        JSONObject commitBlockObject = send(objectSend.toString());
+        System.out.println("Opertaions -block commit object is "+commitBlockObject.toString());
+        //System.out.println("Block commit status is "+ commitBlockObject.getString("status").toLowerCase());
+        
+        JSONObject result = new JSONObject();
+        JSONObject contentObject = new JSONObject();
+        contentObject.put("response", commitBlockObject);
+        System.out.println("Opertaions - commitBlockObject "+commitBlockObject.toString());
+        System.out.println("Opertaions - contentObject "+contentObject.toString());
+        result.put("data", contentObject);
+        result.put("message", "");
+        result.put("status", "true");
+        System.out.println("result "+result.toString());
+
+        return result.toString();
+
+    }
+/*
+    @RequestMapping(value = "/verifyBlock", method = RequestMethod.POST,
+            produces = {"application/json", "application/xml"})
+    public static String verifyBlock(@RequestBody RequestModel requestModel) throws Exception {
+        if (!mainDir())
+            return checkRubixDir();
+        if (!Basics.mutex)
+            start();
+
+        String blockHash = requestModel.getBlockHash();
+        String comments = requestModel.getComment();
+        int type = requestModel.getType();
+
+        JSONObject objectSend = new JSONObject();
+        objectSend.put("blockHash", blockHash);
+        objectSend.put("type", type);
+        objectSend.put("comment", comments);
+
+        
+        
+        JSONObject result = new JSONObject();
+        JSONObject contentObject = new JSONObject();
+        contentObject.put("response", Authenticate.verifySignature(objectSend.toString()));
+        result.put("data", contentObject);
+        result.put("message", "");
+        result.put("status", "true");
+        return result.toString();
+
+    }*/
+    
 }
