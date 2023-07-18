@@ -8,11 +8,11 @@
 
 Java Spring service that connects wallets and other 3rd party applications, configurations for node setup with Core rubix framework.
 
-Platform is accesible via REST APIs in localhost:1898.
+Platform is accessible via REST APIs in localhost:1898.
 
 ## Building from Source
 
-Rubix Platform is the Spring API project which uses RubixCoreJava and DIDRef to run the network. To build the source, you need to download the RubixCoreJava and DIDRef repositories. Then, you need to build the RubixCoreJava and DIDRef java libraries. Install the dependencies by running the following mvn commmand with different versions of the dependencies. Update the versions in the pom.xml file to match the versions of the dependencies. Then, you need to build the RubixPlatform.jar file using mvn package command.
+Rubix Platform is the Spring API project which uses RubixCoreJava and DIDRef to run the network. To build the source, you need to download the RubixCoreJava and DIDRef repositories. Then, you need to build the RubixCoreJava and DIDRef java libraries. Install the dependencies by running the following mvn command with different versions of the dependencies. Update the versions in the pom.xml file to match the versions of the dependencies. Then, you need to build the RubixPlatform.jar file using mvn package command.
 
 
 RUBIX JAR build setup  
@@ -125,7 +125,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 ***Request Type***:    POST
 ***Port***:            1898
 ***Input***:           blockHash (String)
-***Condition***: Given block file hash should be already commited for validation before. 
+***Condition***: Given block file hash should be already committed for validation before. 
 ***Returns***:         Hash of each input file given in blockHash file and number of validators storing it in blockchain, Success / Failure (Boolean)
 
 ### Account Information
@@ -279,7 +279,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 
 ### View Network Nodes 
 
-Add an easier and convinient name to your contacts
+Add an easier and convenient name to your contacts
 ```
 curl --location --request POST 'http://localhost:1898/addNickName' --form 'did="QmaGVzjsv4JnQSRdmCfWeMaBPiCTDf8y6scHNfmkRmEfc0"' --form 'nickname="User123"'
 ```
@@ -343,7 +343,7 @@ curl --header "Content-Type: application/json" --request GET http://localhost:18
 
 ### Add bootstrap
 
-Add bootstrap id to the boostrap list
+Add bootstrap id to the bootstrap list
 ```
 curl --header "Content-Type: application/json" --request POST http://localhost:1898/bootstrap?id=<bootstrap-id>
 ```
@@ -355,7 +355,7 @@ curl --header "Content-Type: application/json" --request POST http://localhost:1
 
 ### Remove bootstrap
 
-Remove boostrap id from the boostrap list
+Remove bootstrap id from the bootstrap list
 ```
 curl --header "Content-Type: application/json" --request DELETE http://localhost:1898/bootstrap?id=<bootstrap-id>
 ```
